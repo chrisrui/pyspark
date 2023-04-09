@@ -1,0 +1,78 @@
+from pyspark.sql import SparkSession
+
+# Create a SparkSession object
+spark = SparkSession.builder.appName("Data Selection").getOrCreate()
+
+
+
+####csv
+# Read a CSV file with a header and infer the schema
+csv_data = spark.read.csv("path/to/your/file.csv", header=True, inferSchema=True)
+
+# Read a CSV file with a specified delimiter and encoding
+csv_data = spark.read \
+    .option("delimiter", "|") \
+    .option("encoding", "utf-8") \
+    .csv("path/to/your/file.csv")
+
+####json
+# Read a JSON file
+json_data = spark.read.json("path/to/your/file.json")
+
+# Read a multiline JSON file
+json_data = spark.read.option("multiline", "true").json("path/to/your/file.json")
+
+
+####parquet
+# Read a Parquet file
+parquet_data = spark.read.parquet("path/to/your/file.parquet")
+
+# Read a partitioned Parquet file
+parquet_data = spark.read \
+    .option("basePath", "/path/to/your/partitioned/file") \
+    .parquet("/path/to/your/partitioned/file")
+
+####orc
+# Read an ORC file
+orc_data = spark.read.orc("path/to/your/file.orc")
+
+# Read an ORC file with predicate pushdown
+orc_data = spark.read \
+    .option("orc.filterPushdown", "true") \
+    .orc("path/to/your/file.orc")
+
+
+####avro
+# Read an Avro file
+avro_data = spark.read.format("avro").load("path/to/your/file.avro")
+
+# Read an Avro file with a schema
+from pyspark.sql.avro import from_avro_string
+avro_schema = from_avro_string('{"type": "record", "name": "User", "fields": [{"name": "name", "type": "string"}, {"name": "age", "type": "int"}]}')
+avro_data = spark.read.format("avro") \
+    .option("avroSchema", avro_schema.json()) \
+    .load("path/to/your/file.avro")
+
+
+####text
+# Read a compressed text file
+text_data = spark.read \
+    .text("path/to/your/file.txt.gz") \
+    .option("compression", "gzip")
+
+
+
+
+
+
+
+
+
+# Select data using Spark SQL syntax
+selected_data = data.select("column1", "column2", "column3").where("column1 > 100")
+
+# Show the selected data
+selected_data.show()
+
+# Stop the SparkSession object
+spark.stop()
