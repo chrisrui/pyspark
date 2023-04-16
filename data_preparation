@@ -1,0 +1,62 @@
+# Import PySpark SQL functions and create a SparkSession
+from pyspark.sql.functions import *
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("PySparkExample").getOrCreate()
+
+# Load a CSV file as a PySpark DataFrame
+df = spark.read.format("csv").option("header", "true").load("path/to/file.csv")
+
+
+
+# Select specific columns from the DataFrame
+selected_columns = ["column1", "column2", "column3"]
+df_selected = df.select(*selected_columns)
+
+
+# Filter rows that meet a specific condition
+filtered_df = df.filter(col("column1") == "value")
+
+
+# Group rows by a specific column and aggregate using a function
+grouped_df = df.groupby("column1").agg(avg("column2"))
+
+
+# Remove duplicates from a DataFrame
+df_no_duplicates = df.dropDuplicates()
+
+
+
+# Replace values in a DataFrame
+df_replaced = df.replace("old_value", "new_value", "column_name")
+
+
+# Convert a column to a different data type
+df_converted = df.withColumn("new_column_name", df["existing_column_name"].cast("new_data_type"))
+
+
+# Remove rows with null values from a DataFrame
+df_no_null = df.dropna()
+
+
+# Fill missing values in a DataFrame
+df_imputed = df.fillna({"column_name": "value"})
+
+
+
+# Sort a DataFrame by column(s)
+df_sorted = df.sort("column_name")
+
+
+
+# Pivot data from long to wide format
+df_pivoted = df.groupBy("column1").pivot("column2").agg(avg("column3"))
+
+
+
+
+# Use window functions to compute rolling or cumulative aggregations
+from pyspark.sql.window import Window
+
+window_spec = Window.partitionBy("column1").orderBy("column2").rowsBetween(-1, 0)
+df_with_rolling_average = df.withColumn("rolling_average", avg("column3").over(window_spec))
+
